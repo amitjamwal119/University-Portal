@@ -27,6 +27,6 @@ connectDB();
 // .then(() => console.log("Database Connected Successfully !!!"))
 // .catch((err) => console.log("Error Connecting Database!" , err));
 
-app.use("/students", userRoutes);
+app.use("/api", userRoutes);
 
-app.listen(9003, () => console.log("Server is running on port : 9003"));
+app.listen(9004, () => console.log("Server is running on port : 9003"));

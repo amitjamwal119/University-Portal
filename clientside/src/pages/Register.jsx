@@ -1,44 +1,31 @@
 import { Form, Button, Container, Card } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import axios from "axios";
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [semester, setSemester] = useState("");
-  const [rollno, setRollNo] = useState("");
-  const [phoneno, setPhoneNo] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setpassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const Navigate = useNavigate();
-  const handleSubmit = async(event) => {
-    //handlesubmitt is passed to onsubmit in form tag after submittion it will check the conditions which we have given
-    event.preventDefault(); //preventDefault(); stops bydefault reloading of page after submittion
-    if (!name || !semester || !rollno || !phoneno || !email || !password) {
-      alert("All Fields are Required!");
-      return;
+  const navigate = useNavigate();
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:9004/api/register",
+        data
+      );
+      console.log(response);
+      alert("New user created successfully!");
+      navigate("/login");
+    } catch (err) {
+      console.log("Error registering user", err);
+      alert("User may already exist or there is a server error");
     }
-
-  await  axios
-      .post("http://localhost:9003/students/register", {
-        name,
-        semester,
-        rollno,
-        phoneno,
-        email,
-        password,
-      })
-      .then((user) => {
-        console.log(user);
-        alert("New user Created Successfully!");
-        Navigate("/login");
-      })
-      .catch((err) => {
-        console.log("Error registring User", err)
-        alert("User may be already existed or server error");
-      });
   };
 
   return (
@@ -51,66 +38,124 @@ const Register = () => {
           <Card.Title className="text-center mb-4">
             Student Registration
           </Card.Title>
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Form.Group className="mb-3" controlId="FormName">
               <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
                 placeholder="Enter Name"
+                {...register("name", {
+                  required: "Name is required",
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      "Name should not contain numbers or special characters",
+                  },
+                })}
               />
-              {/* event.target refers to the input field that triggered the event. , .value retrieves the current text inside the input field. */}
+              {errors.name && (
+                <p className="text-danger">{errors.name.message}</p>
+              )}
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="FormSemester">
               <Form.Label>Semester</Form.Label>
               <Form.Control
-                type="text"
-                value={semester}
-                onChange={(event) => setSemester(event.target.value)}
+                type="number"
+                step="1"
                 placeholder="Enter Semester"
+                {...register("semester", {
+                  required: "Semester is required",
+                  min: { value: 1, message: "Semester must be at least 1" },
+                  max: {
+                    value: 8,
+                    message: "Semester must not be more than 8",
+                  },
+                })}
               />
+              {errors.semester && (
+                <p className="text-danger">{errors.semester.message}</p>
+              )}
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="FormRollNo">
               <Form.Label>Roll No.</Form.Label>
               <Form.Control
-                type="text"
-                value={rollno}
-                onChange={(event) => setRollNo(event.target.value)}
+                type="number"
+                step="1"
                 placeholder="Enter Roll No."
+                {...register("rollno", {
+                  required: "Roll number is required",
+                  min: { value: 1, message: "Roll number must be at least 1" },
+                  max: {
+                    value: 999,
+                    message: "Roll number must be less than 1000",
+                  },
+                })}
               />
+              {errors.rollno && (
+                <p className="text-danger">{errors.rollno.message}</p>
+              )}
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="FormPhone">
               <Form.Label>Phone Number</Form.Label>
               <Form.Control
                 type="text"
-                value={phoneno}
-                onChange={(event) => setPhoneNo(event.target.value)}
                 placeholder="Enter Phone Number"
+                {...register("phoneno", {
+                  required: "Phone number is required",
+                  pattern: {
+                    value: /^[0-9]{10}$/,
+                    message: "Enter a valid 10-digit phone number",
+                  },
+                })}
               />
+              {errors.phoneno && (
+                <p className="text-danger">{errors.phoneno.message}</p>
+              )}
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="FormEmail">
               <Form.Label>Email address</Form.Label>
               <Form.Control
                 type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
                 placeholder="Enter Email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Enter a valid email address",
+                  },
+                })}
               />
+              {errors.email && (
+                <p className="text-danger">{errors.email.message}</p>
+              )}
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="FormPassword">
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
-                value={password}
-                onChange={(event) => setpassword(event.target.value)}
                 placeholder="Enter Password"
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                  pattern: {
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+                    message:
+                      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                  },
+                })}
               />
+              {errors.password && (
+                <p className="text-danger">{errors.password.message}</p>
+              )}
             </Form.Group>
 
             <Button variant="primary" type="submit" className="w-100">
@@ -119,7 +164,7 @@ const Register = () => {
           </Form>
           <div className="para">
             <p>
-              Are you already a user? <Link to="/login">Login</Link>
+              Already a user? <Link to="/login">Login</Link>
             </p>
           </div>
         </Card.Body>

@@ -37,19 +37,20 @@ const login = async (req, res) => {
   try{
     
     const { email, password } = req.body;
-    const user = UserModel.findOne({ email });
+    // console.log("bodyyyy",req.body)
+    const user = await UserModel.findOne({ email });
 
     if(!user){
-        res.json({ message: "User not found" })
+       return res.json({ message: "User not found" })
     }
 
-    const isMatch = bcrypt.compare(password, user.password)
+    const isMatch = await bcrypt.compare(password, user.password)
     if(!isMatch){
-      res.json({ message: "Invalid Credentials" });
-      return;
+      return res.status(404).json({ message: "Invalid Credentials" });
+      
     }
     //To create jsonwebtoken
-    const token = jwt.sign({ id: user._id }, 'secretcode')
+    const token = jwt.sign({ id: user._id}, 'secretcode')
 
     //Send success response with token
     res.json( {message: "Login Successful", token} )

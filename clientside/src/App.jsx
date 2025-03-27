@@ -6,6 +6,7 @@ import Teachers from "./pages/Teachers";
 import Attendance from "./pages/Attendance";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Home/>} />
+        <Route path="/dashboard" element={<Dashboard />}/>
         <Route path="/students" element={<Students/>} />
         <Route path="teachers" element={<Teachers/>}/>
         <Route path="/attendance" element={<Attendance/>}/>
