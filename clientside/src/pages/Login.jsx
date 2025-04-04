@@ -16,9 +16,11 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       const result = await axios.post("http://localhost:9004/api/login", data);
-      console.log("resss", result);
+      alert(result.data.message); //semicolon change
+      //Stores JWT token in localStorage.
       localStorage.setItem("token", result.data.token);
       alert("Login Successful!");
+
       navigate("/dashboard");
     } catch (err) {
       console.log("Failed to Login", err);
@@ -28,7 +30,10 @@ const Login = () => {
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
-      <Card className="p-4 shadow-lg" style={{ width: "700px", borderRadius: "10px" }}>
+      <Card
+        className="p-4 shadow-lg"
+        style={{ width: "700px", borderRadius: "10px" }}
+      >
         <Card.Body>
           <Card.Title className="text-center mb-4">Student Login</Card.Title>
           <Form onSubmit={handleSubmit(onSubmit)}>
@@ -45,7 +50,9 @@ const Login = () => {
                   },
                 })}
               />
-              {errors.email && <p className="text-danger">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-danger">{errors.email.message}</p>
+              )}
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="FormPassword">
@@ -55,10 +62,15 @@ const Login = () => {
                 placeholder="Enter Password"
                 {...register("password", {
                   required: "Password is required",
-                  minLength: { value: 6, message: "Password must be at least 6 characters" },
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
                 })}
               />
-              {errors.password && <p className="text-danger">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-danger">{errors.password.message}</p>
+              )}
             </Form.Group>
 
             <Button variant="primary" type="submit" className="w-100">

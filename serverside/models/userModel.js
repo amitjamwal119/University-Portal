@@ -10,6 +10,6 @@ const studentsSchema = new mongoose.Schema({
 });
 
 
-const UserModel = mongoose.model("students", studentsSchema);       //Students is model/file in database name
+const UserModel = mongoose.model("students", studentsSchema);       //students is filename/Studentscollection is database name written mannually
 
 module.exports = UserModel;

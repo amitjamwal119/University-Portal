@@ -1,42 +1,72 @@
-import { Form, Button, Container, Card } from "react-bootstrap";
+// import { useEffect } from "react";
+import  Navbar  from "../components/Navbar"
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Form, Button, Container, Card } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from "axios";
 
-const Register = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
+
+const Update = () => {
+
+  
+  const{ id } = useParams();
   const navigate = useNavigate();
 
-  const onSubmit = async (data) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:9004/api/register",
-        data
-      );
-      console.log(response);
-      alert("New user created successfully!");
-      navigate("/login");
-    } catch (err) {
-      console.log("Error registering user", err);
-      alert("User may already exist or there is a server error");
-    }
-  };
+      const {
+        register,
+        // setValue,
+        handleSubmit,
+        formState: { errors },
+      } = useForm();
+
+      //Fetch User Data
+      // useEffect(() => {
+      //   const fetchUser = async () => {
+      //     try {
+      //       const response = await axios.get(`http://localhost:9004/api/update/${id}`);
+
+      //       console.log("resssr", response);
+      //       Object.keys(response.data).forEach((key) => {
+      //         setValue(key, response.data[key]);  
+      //     });
+
+      //     } catch (err) {
+      //       console.log("Error fatching user data",err);
+      //     }
+      //   };
+      
+      //   fetchUser();
+      // }, [id, setValue]);
+
+      // console.log("valueeeee",)
+      
+      //Handle Input Changes
+      const onSubmit = async (data) => {
+        try {
+          const response = await axios.put(`http://localhost:9004/api/edituser/${id}`, data);
+          console.log("Updated response", response);
+          alert("User's Details Updated Successfully!");
+          navigate("/Dashboard");
+        }
+        catch (error) {
+          console.log("Error Updating User Data:", error);
+          alert("Error Updating User Details!")
+        }
+      }
 
   return (
-    <Container className="d-flex justify-content-center align-items-center vh-700">
+    <>
+        <Navbar/>
+        <Container className="d-flex justify-content-center align-items-center vh-700">
       <Card
         className="p-4 shadow-lg"
         style={{ width: "700px", borderRadius: "10px", backgroundColor: "" }}
       >
         <Card.Body>
           <Card.Title className="text-center mb-4">
-            Student Registration
+            Update Student details 
           </Card.Title>
           <Form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Form.Group className="mb-3" controlId="FormName">
@@ -159,18 +189,20 @@ const Register = () => {
             </Form.Group>
 
             <Button variant="primary" type="submit" className="w-100">
-              Register
+              Update Details
             </Button>
           </Form>
-          <div className="para">
+          {/* <div className="para">
             <p>
               Already a user? <Link to="/login">Login</Link>
             </p>
-          </div>
+          </div> */}
         </Card.Body>
       </Card>
     </Container>
-  );
-};
 
-export default Register;
+    </>
+  )
+}
+
+export default Update
